@@ -100,17 +100,35 @@
    <div class="row">
       <div class="col-sm-3">
       	<a href="index.php?page=fsdk_plan_contable" class="btn btn-sm btn-block btn-default">
-            <i class="fa fa-balance-scale" aria-hidden="true"></i> CSV =&gt; Plan contable
-         </a>
-      </div>
-      <div class="col-sm-9">
-         <p class="help-block">
-            Permite generar un plan contable a partir de un CSV o <b>excel</b> con el listado
-            de cuentas y sus descripciones.
-         </p>
-      </div>
-   </div>
-</div>
+             <i class="fa fa-balance-scale" aria-hidden="true"></i> CSV =&gt; Plan contable
+          </a>
+       </div>
+       <div class="col-sm-9">
+          <p class="help-block">
+             Permite generar un plan contable a partir de un CSV o <b>excel</b> con el listado
+             de cuentas y sus descripciones.
+          </p>
+       </div>
+    </div>
+    <div class="row">
+       <div class="col-sm-12">
+          <br/>
+       </div>
+    </div>
+    <div class="row">
+       <div class="col-sm-3">
+          <a href="#" class="btn btn-sm btn-block btn-danger" data-toggle="modal" data-target="#modal_clean_tables">
+             <i class="fa fa-trash-o" aria-hidden="true"></i> Limpiar tablas de plugins desactivados
+          </a>
+       </div>
+       <div class="col-sm-9">
+          <p class="help-block">
+             Elimina las tablas de la base de datos que pertenecen a plugins desactivados.
+             Esto es útil para liberar espacio después de desactivar plugins que ya no se utilizan.
+          </p>
+       </div>
+    </div>
+ </div>
 
 <div class="modal fade" id="modal_datos_prueba" tabindex="-1" role="dialog">
    <div class="modal-dialog modal-lg" role="document">
@@ -273,10 +291,109 @@
                <button class="btn btn-sm btn-primary" type="submit">
                   <i class="fa fa-puzzle-piece" aria-hidden="true"></i>&nbsp; Generar
                </button>
-            </div>         
+            </div>
          </div>
       </div>
    </div>
 </form>
+
+<form action="{$fsc->url()}" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar las tablas de los plugins seleccionados? Esta acción no se puede deshacer.')">
+   <input type="hidden" name="clean_plugin_tables" value="TRUE">
+   <div class="modal fade" id="modal_clean_tables" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+               <h4 class="modal-title">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i>
+                  Limpiar tablas de plugins desactivados
+               </h4>
+               <p class="help-block">
+                  Secciona los plugins de los que quieres eliminar las tablas.
+               </p>
+            </div>
+            <div class="modal-body">
+               {if="empty($fsc->plugins_desactivados)"}
+               <div class="alert alert-info">
+                  <i class="fa fa-info-circle" aria-hidden="true"></i>
+                  No se encontraron plugins desactivados con tablas en la base de datos.
+               </div>
+               {else}
+               <div class="alert alert-warning">
+                  <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                  <strong>¡Atención!</strong> Esta acción eliminará permanentemente las tablas seleccionadas de la base de datos.
+                  Asegúrate de tener un backup antes de continuar.
+               </div>
+               <div class="table-responsive">
+                  <table class="table table-striped">
+                     <thead>
+                        <tr>
+                           <th style="width: 40px;">
+                              <input type="checkbox" id="select_all_plugins" onclick="toggleAllPlugins()">
+                           </th>
+                           <th>Plugin</th>
+                           <th>Tablas a eliminar</th>
+                           <th>Cantidad</th>
+                           <th>Acción individual</th>
+                        </tr>
+                     </thead>
+                      <tbody>
+                        {loop="$fsc->plugins_desactivados"}
+                        <tr>
+                           <td>
+                              <input type="checkbox" name="plugins_seleccionados[]" value="{$value['nombre']}" class="plugin-checkbox">
+                           </td>
+                           <td><strong>{$value['nombre']}</strong></td>
+                           <td>
+                              {loop="$value['tablas']"}
+                              <span class="label label-default">{$value}</span>&nbsp;
+                              {/loop}
+                           </td>
+                            <td>{$value['num_tablas']}</td>
+                           <td>
+                              <a href="{$fsc->url()}&clean_plugin_tables=TRUE&plugin={$value['nombre']}" class="btn btn-xs btn-danger" onclick="return confirm('¿Eliminar solo las tablas del plugin {$value['nombre']}?')">
+                                 <i class="fa fa-trash-o" aria-hidden="true"></i> Solo este
+                              </a>
+                           </td>
+                        </tr>
+                        {/loop}
+                     </tbody>
+                     <tfoot>
+                        <tr class="info">
+                           <td></td>
+                           <td><strong>Total de tablas:</strong></td>
+                           <td></td>
+                            <td><strong>{$fsc->total_tablas_a_eliminar}</strong></td>
+                           <td></td>
+                        </tr>
+                     </tfoot>
+                  </table>
+               </div>
+               {/if}
+            </div>
+            <div class="modal-footer">
+               {if="!empty($fsc->plugins_desactivados)"}
+               <button type="submit" class="btn btn-danger">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i> Eliminar tablas de plugins seleccionados
+               </button>
+               {/if}
+               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<script>
+function toggleAllPlugins() {
+   var checkboxes = document.querySelectorAll('.plugin-checkbox');
+   var selectAll = document.getElementById('select_all_plugins');
+   for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = selectAll.checked;
+   }
+}
+</script>
 
 {include="footer"}

@@ -17,6 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 require_once __DIR__ . '/../lib/generar_datos_prueba.php';
+require_once 'base/fs_plugin_manager.php';
 
 if (!defined('FS_SERVICIOS')) {
     define('FS_SERVICIOS', 'servicios');
@@ -32,6 +33,9 @@ class fsdk_home extends fs_controller
 
     public $tablas;
     public $url_recarga;
+    public $plugins_desactivados;
+    public $tablas_a_eliminar;
+    public $total_tablas_a_eliminar;
 
     public function __construct()
     {
@@ -41,6 +45,17 @@ class fsdk_home extends fs_controller
     protected function private_core()
     {
         $this->url_recarga = FALSE;
+        $this->plugins_desactivados = [];
+        $this->tablas_a_eliminar = [];
+        $this->total_tablas_a_eliminar = 0;
+
+        // Limpiar tablas de plugins desactivados
+        if (isset($_GET['clean_plugin_tables']) || isset($_POST['clean_plugin_tables'])) {
+            $this->limpiar_tablas_plugins_desactivados();
+        }
+
+        // Cargar información de plugins desactivados
+        $this->cargar_plugins_desactivados();
 
         if (isset($_GET['gdp'])) {
             $gdp = new generar_datos_prueba($this->db, $this->empresa);
@@ -250,5 +265,112 @@ class fsdk_home extends fs_controller
         }
 
         return TRUE;
+    }
+
+    /**
+     * Carga la lista de plugins desactivados y sus tablas asociadas
+     */
+    private function cargar_plugins_desactivados()
+    {
+        $plugin_manager = new fs_plugin_manager();
+        $plugins_enabled = $plugin_manager->enabled();
+        
+        // Obtener todos los plugins instalados (carpetas en plugins/)
+        $plugins_instalados = [];
+        $plugins_dir = 'plugins/';
+        if (is_dir($plugins_dir)) {
+            $iterator = new DirectoryIterator($plugins_dir);
+            foreach ($iterator as $fileinfo) {
+                if ($fileinfo->isDir() && !$fileinfo->isDot()) {
+                    $plugin_name = $fileinfo->getFilename();
+                    // Excluir carpetas _back y plugins habilitados
+                    if (substr($plugin_name, -5) !== '_back' && !in_array($plugin_name, $plugins_enabled)) {
+                        $plugins_instalados[] = $plugin_name;
+                    }
+                }
+            }
+        }
+
+        foreach ($plugins_instalados as $plugin_name) {
+            $plugin_path = 'plugins/' . $plugin_name;
+            if (!is_dir($plugin_path)) {
+                continue;
+            }
+
+            $tablas_plugin = [];
+            $xml_path = $plugin_path . '/model/table/';
+
+            if (is_dir($xml_path)) {
+                $xml_files = glob($xml_path . '*.xml');
+                foreach ($xml_files as $xml_file) {
+                    $tabla = basename($xml_file, '.xml');
+                    if ($this->db->table_exists($tabla)) {
+                        $tablas_plugin[] = $tabla;
+                    }
+                }
+            }
+
+            if (!empty($tablas_plugin)) {
+                $this->plugins_desactivados[] = [
+                    'nombre' => $plugin_name,
+                    'tablas' => $tablas_plugin,
+                    'num_tablas' => count($tablas_plugin)
+                ];
+                $this->tablas_a_eliminar = array_merge($this->tablas_a_eliminar, $tablas_plugin);
+            }
+        }
+        
+        $this->total_tablas_a_eliminar = count($this->tablas_a_eliminar);
+    }
+
+    /**
+     * Elimina las tablas de la base de datos de plugins desactivados seleccionados
+     */
+    private function limpiar_tablas_plugins_desactivados()
+    {
+        $this->cargar_plugins_desactivados();
+        $tablas_eliminadas = [];
+        $tablas_error = [];
+        $plugins_procesados = [];
+
+        // Verificar si se seleccionaron plugins específicos
+        if (isset($_POST['plugins_seleccionados']) && is_array($_POST['plugins_seleccionados'])) {
+            $plugins_a_limpiar = $_POST['plugins_seleccionados'];
+        } else if (isset($_GET['plugin'])) {
+            // Compatibilidad con eliminación individual por URL
+            $plugins_a_limpiar = [$_GET['plugin']];
+        } else {
+            // Si no hay selección, no hacer nada (requiere selección explícita)
+            $this->new_message('No se seleccionó ningún plugin para limpiar.', true);
+            return;
+        }
+
+        foreach ($this->plugins_desactivados as $plugin) {
+            if (!in_array($plugin['nombre'], $plugins_a_limpiar)) {
+                continue;
+            }
+
+            $plugins_procesados[] = $plugin['nombre'];
+            foreach ($plugin['tablas'] as $tabla) {
+                $sql = "DROP TABLE IF EXISTS " . $tabla;
+                if ($this->db->exec($sql)) {
+                    $tablas_eliminadas[] = $tabla;
+                } else {
+                    $tablas_error[] = $tabla;
+                }
+            }
+        }
+
+        if (!empty($tablas_eliminadas)) {
+            $this->new_message('Se eliminaron ' . count($tablas_eliminadas) . ' tabla(s) de los plugin(s) ' . implode(', ', $plugins_procesados) . ': ' . implode(', ', $tablas_eliminadas), true);
+        }
+
+        if (!empty($tablas_error)) {
+            $this->new_error_msg('Error al eliminar tabla(s): ' . implode(', ', $tablas_error));
+        }
+
+        if (empty($tablas_eliminadas) && empty($tablas_error)) {
+            $this->new_message('No se encontraron tablas para eliminar.', true);
+        }
     }
 }

@@ -2,18 +2,17 @@
 
 {if="$fsc->url_recarga"}
 <script type="text/javascript">
-   function recargar()
-   {
+   function recargar() {
       window.location.href = '{$fsc->url_recarga}';
    }
-   $(document).ready(function() {
+   $(document).ready(function () {
       setTimeout(recargar, 5000);
    });
 </script>
 {/if}
 
 <div class="container-fluid">
-	<div class="row">
+   <div class="row">
       <div class="col-sm-12">
          <div class="page-header">
             <h1>
@@ -24,11 +23,13 @@
                      <span class="glyphicon glyphicon-refresh"></span>
                   </a>
                   {if="$fsc->page->is_default()"}
-                  <a class="btn btn-xs btn-default active" href="{$fsc->url()}&amp;default_page=FALSE" title="Marcada como página de inicio (pulsa de nuevo para desmarcar)">
+                  <a class="btn btn-xs btn-default active" href="{$fsc->url()}&amp;default_page=FALSE"
+                     title="Marcada como página de inicio (pulsa de nuevo para desmarcar)">
                      <i class="fa fa-bookmark" aria-hidden="true"></i>
                   </a>
                   {else}
-                  <a class="btn btn-xs btn-default" href="{$fsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio">
+                  <a class="btn btn-xs btn-default" href="{$fsc->url()}&amp;default_page=TRUE"
+                     title="Marcar como página de inicio">
                      <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                   </a>
                   {/if}
@@ -57,7 +58,7 @@
    </div>
    <div class="row">
       <div class="col-sm-12">
-         <br/>
+         <br />
       </div>
    </div>
    <div class="row">
@@ -75,12 +76,12 @@
    </div>
    <div class="row">
       <div class="col-sm-12">
-         <br/>
+         <br />
       </div>
    </div>
    <div class="row">
       <div class="col-sm-3">
-      	<a href="#" class="btn btn-sm btn-block btn-default" data-toggle="modal" data-target="#modal_nuevo_plugin">
+         <a href="#" class="btn btn-sm btn-block btn-default" data-toggle="modal" data-target="#modal_nuevo_plugin">
             <i class="fa fa-puzzle-piece" aria-hidden="true"></i> Generar nuevo plugin
          </a>
       </div>
@@ -99,36 +100,55 @@
    </div>
    <div class="row">
       <div class="col-sm-3">
-      	<a href="index.php?page=fsdk_plan_contable" class="btn btn-sm btn-block btn-default">
-             <i class="fa fa-balance-scale" aria-hidden="true"></i> CSV =&gt; Plan contable
-          </a>
-       </div>
-       <div class="col-sm-9">
-          <p class="help-block">
-             Permite generar un plan contable a partir de un CSV o <b>excel</b> con el listado
-             de cuentas y sus descripciones.
-          </p>
-       </div>
-    </div>
-    <div class="row">
-       <div class="col-sm-12">
-          <br/>
-       </div>
-    </div>
-    <div class="row">
-       <div class="col-sm-3">
-          <a href="#" class="btn btn-sm btn-block btn-danger" data-toggle="modal" data-target="#modal_clean_tables">
-             <i class="fa fa-trash-o" aria-hidden="true"></i> Limpiar tablas de plugins desactivados
-          </a>
-       </div>
-       <div class="col-sm-9">
-          <p class="help-block">
-             Elimina las tablas de la base de datos que pertenecen a plugins desactivados.
-             Esto es útil para liberar espacio después de desactivar plugins que ya no se utilizan.
-          </p>
-       </div>
-    </div>
- </div>
+         <a href="index.php?page=fsdk_plan_contable" class="btn btn-sm btn-block btn-default">
+            <i class="fa fa-balance-scale" aria-hidden="true"></i> CSV =&gt; Plan contable
+         </a>
+      </div>
+      <div class="col-sm-9">
+         <p class="help-block">
+            Permite generar un plan contable a partir de un CSV o <b>excel</b> con el listado
+            de cuentas y sus descripciones.
+         </p>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-12">
+         <br />
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-3">
+         <a href="#" class="btn btn-sm btn-block btn-danger" data-toggle="modal" data-target="#modal_clean_tables">
+            <i class="fa fa-trash-o" aria-hidden="true"></i> Limpiar tablas de plugins desactivados
+         </a>
+      </div>
+      <div class="col-sm-9">
+         <p class="help-block">
+            Elimina las tablas de la base de datos que pertenecen a plugins desactivados.
+            Esto es útil para liberar espacio después de desactivar plugins que ya no se utilizan.
+         </p>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-12">
+         <br />
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-3">
+         <a href="#" class="btn btn-sm btn-block btn-danger" data-toggle="modal"
+            data-target="#modal_resetear_framework">
+            <i class="fa fa-bomb" aria-hidden="true"></i> Resetear framework
+         </a>
+      </div>
+      <div class="col-sm-9">
+         <p class="help-block">
+            <strong>¡Peligro!</strong> Elimina <strong>todas</strong> las tablas de la base de datos y el archivo
+            <code>config.php</code>. El framework volverá al estado de instalación inicial.
+         </p>
+      </div>
+   </div>
+</div>
 
 <div class="modal fade" id="modal_datos_prueba" tabindex="-1" role="dialog">
    <div class="modal-dialog modal-lg" role="document">
@@ -151,69 +171,70 @@
                   <a href="{$fsc->url()}&gdp=fabricantes" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-folder" aria-hidden="true"></i> Fabricantes
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=familias" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-folder" aria-hidden="true"></i> Familias
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=articulos" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-cubes" aria-hidden="true"></i> Artículos
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=agentes" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-users" aria-hidden="true"></i> Empleados
                   </a>
-                  <br/>
+                  <br />
                </div>
                <div class="col-sm-4">
                   <a href="{$fsc->url()}&gdp=proveedores" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-users" aria-hidden="true"></i> Proveedores
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=albaranesprov" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-copy" aria-hidden="true"></i> {#FS_ALBARANES#} de compra
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=pedidosprov" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-copy" aria-hidden="true"></i> {#FS_PEDIDOS#} de compra
                   </a>
-                  <br/>
+                  <br />
                </div>
                <div class="col-sm-4">
                   <a href="{$fsc->url()}&gdp=gruposcli" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-folder" aria-hidden="true"></i> Grupos de clientes
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=clientes" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-users" aria-hidden="true"></i> Clientes
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=albaranescli" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-copy" aria-hidden="true"></i> {#FS_ALBARANES#} de venta
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=pedidoscli" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-copy" aria-hidden="true"></i> {#FS_PEDIDOS#} de venta
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=presupuestoscli" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-copy" aria-hidden="true"></i> {#FS_PRESUPUESTOS#} de venta
                   </a>
-                  <br/>
+                  <br />
                   <a href="{$fsc->url()}&gdp=servicioscli" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-copy" aria-hidden="true"></i> {#FS_SERVICIOS#} a clientes
                   </a>
-                  <br/>
+                  <br />
                </div>
             </div>
             <div class="row">
-            {loop="$fsc->extensions"}
+               {loop="$fsc->extensions"}
                {if="$value->type=='generate'"}
                <div class="col-sm-4">
-                  <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-block btn-default">{$value->text}</a>
+                  <a href="index.php?page={$value->from}{$value->params}"
+                     class="btn btn-sm btn-block btn-default">{$value->text}</a>
                </div>
                {/if}
-            {/loop}
+               {/loop}
             </div>
             <div class="row">
                <div class="col-sm-12">
@@ -251,7 +272,7 @@
                   <a href="index.php?page=fsdk_tabla&table={$value['name']}" class="btn btn-sm btn-block btn-default">
                      <i class="fa fa-folder" aria-hidden="true"></i> {$value['name']}
                   </a>
-                  <br/>
+                  <br />
                </div>
                {/loop}
             </div>
@@ -280,7 +301,8 @@
             <div class="modal-body">
                <div class="form-group">
                   Nombre:
-                  <input type="text" name="nombre" value="holamundo" class="form-control" autofocus="" autocomplete="off"/>
+                  <input type="text" name="nombre" value="holamundo" class="form-control" autofocus=""
+                     autocomplete="off" />
                </div>
                <div class="form-group">
                   Descripción:
@@ -297,7 +319,8 @@
    </div>
 </form>
 
-<form action="{$fsc->url()}" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar las tablas de los plugins seleccionados? Esta acción no se puede deshacer.')">
+<form action="{$fsc->url()}" method="post"
+   onsubmit="return confirm('¿Estás seguro de que quieres eliminar las tablas de los plugins seleccionados? Esta acción no se puede deshacer.')">
    <input type="hidden" name="clean_plugin_tables" value="TRUE">
    <div class="modal fade" id="modal_clean_tables" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-lg" role="document">
@@ -323,7 +346,8 @@
                {else}
                <div class="alert alert-warning">
                   <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                  <strong>¡Atención!</strong> Esta acción eliminará permanentemente las tablas seleccionadas de la base de datos.
+                  <strong>¡Atención!</strong> Esta acción eliminará permanentemente las tablas seleccionadas de la base
+                  de datos.
                   Asegúrate de tener un backup antes de continuar.
                </div>
                <div class="table-responsive">
@@ -339,21 +363,22 @@
                            <th>Acción individual</th>
                         </tr>
                      </thead>
-                      <tbody>
+                     <tbody>
                         {loop="$fsc->plugins_desactivados"}
                         <tr>
                            <td>
-                              <input type="checkbox" name="plugins_seleccionados[]" value="{$value['nombre']}" class="plugin-checkbox">
+                              <input type="checkbox" name="plugins_seleccionados[]" value="{$value['nombre']}"
+                                 class="plugin-checkbox">
                            </td>
                            <td><strong>{$value['nombre']}</strong></td>
                            <td>
-                              {loop="$value['tablas']"}
-                              <span class="label label-default">{$value}</span>&nbsp;
-                              {/loop}
+                              {$value['tablas_texto']}
                            </td>
-                            <td>{$value['num_tablas']}</td>
+                           <td>{$value['num_tablas']}</td>
                            <td>
-                              <a href="{$fsc->url()}&clean_plugin_tables=TRUE&plugin={$value['nombre']}" class="btn btn-xs btn-danger" onclick="return confirm('¿Eliminar solo las tablas del plugin {$value['nombre']}?')">
+                              <a href="{$fsc->url()}&clean_plugin_tables=TRUE&plugins={$value['nombre']}"
+                                 class="btn btn-xs btn-danger"
+                                 onclick="return confirm('¿Eliminar solo las tablas del plugin {$value['nombre']}?')">
                                  <i class="fa fa-trash-o" aria-hidden="true"></i> Solo este
                               </a>
                            </td>
@@ -365,7 +390,7 @@
                            <td></td>
                            <td><strong>Total de tablas:</strong></td>
                            <td></td>
-                            <td><strong>{$fsc->total_tablas_a_eliminar}</strong></td>
+                           <td><strong>{$fsc->total_tablas_a_eliminar}</strong></td>
                            <td></td>
                         </tr>
                      </tfoot>
@@ -387,13 +412,60 @@
 </form>
 
 <script>
-function toggleAllPlugins() {
-   var checkboxes = document.querySelectorAll('.plugin-checkbox');
-   var selectAll = document.getElementById('select_all_plugins');
-   for (var i = 0; i < checkboxes.length; i++) {
-      checkboxes[i].checked = selectAll.checked;
+   function toggleAllPlugins() {
+      var checkboxes = document.querySelectorAll('.plugin-checkbox');
+      var selectAll = document.getElementById('select_all_plugins');
+      for (var i = 0; i < checkboxes.length; i++) {
+         checkboxes[i].checked = selectAll.checked;
+      }
    }
-}
+</script>
+
+<form action="{$fsc->url()}" method="post" id="form_resetear_framework">
+   <input type="hidden" name="resetear_framework" value="TRUE">
+   <div class="modal fade" id="modal_resetear_framework" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+               <h4 class="modal-title">
+                  <i class="fa fa-bomb" aria-hidden="true"></i>
+                  Resetear framework
+               </h4>
+            </div>
+            <div class="modal-body">
+               <div class="alert alert-danger">
+                  <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                  <strong>¡ATENCIÓN! Esta acción es irreversible.</strong><br />
+                  Se eliminarán <strong>todas las tablas</strong> de la base de datos y el archivo
+                  <code>config.php</code>.<br />
+                  El framework volverá al estado de instalación inicial y perderás todos los datos.
+               </div>
+               <div class="form-group">
+                  <label for="confirmar_reset">Escribe <strong>RESETEAR</strong> para confirmar:</label>
+                  <input type="text" name="confirmar_reset" id="confirmar_reset" class="form-control" autocomplete="off"
+                     placeholder="Escribe RESETEAR aquí">
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+               <button type="submit" class="btn btn-danger" id="btn_resetear" disabled>
+                  <i class="fa fa-bomb" aria-hidden="true"></i> Resetear framework
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+<script>
+   $(document).ready(function () {
+      $('#confirmar_reset').on('input', function () {
+         $('#btn_resetear').prop('disabled', $(this).val() !== 'RESETEAR');
+      });
+   });
 </script>
 
 {include="footer"}

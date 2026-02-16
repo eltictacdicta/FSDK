@@ -49,6 +49,12 @@ class fsdk_home extends fs_controller
         $this->tablas_a_eliminar = [];
         $this->total_tablas_a_eliminar = 0;
 
+        // Resetear framework completo
+        if (isset($_POST['resetear_framework'])) {
+            $this->resetear_framework();
+            return;
+        }
+
         // Limpiar tablas de plugins desactivados
         if (isset($_GET['clean_plugin_tables']) || isset($_POST['clean_plugin_tables'])) {
             $this->limpiar_tablas_plugins_desactivados();
@@ -274,7 +280,7 @@ class fsdk_home extends fs_controller
     {
         $plugin_manager = new fs_plugin_manager();
         $plugins_enabled = $plugin_manager->enabled();
-        
+
         // Obtener todos los plugins instalados (carpetas en plugins/)
         $plugins_instalados = [];
         $plugins_dir = 'plugins/';
@@ -314,13 +320,78 @@ class fsdk_home extends fs_controller
                 $this->plugins_desactivados[] = [
                     'nombre' => $plugin_name,
                     'tablas' => $tablas_plugin,
+                    'tablas_texto' => implode(', ', $tablas_plugin),
                     'num_tablas' => count($tablas_plugin)
                 ];
                 $this->tablas_a_eliminar = array_merge($this->tablas_a_eliminar, $tablas_plugin);
             }
         }
-        
+
         $this->total_tablas_a_eliminar = count($this->tablas_a_eliminar);
+    }
+
+    /**
+     * Resetea el framework: elimina todas las tablas de la base de datos y el archivo config.php
+     */
+    private function resetear_framework()
+    {
+        // Verificar confirmación
+        if (!isset($_POST['confirmar_reset']) || $_POST['confirmar_reset'] !== 'RESETEAR') {
+            $this->new_error_msg('Debes escribir RESETEAR para confirmar la acción.');
+            return;
+        }
+
+        $tablas = $this->db->list_tables();
+        $tablas_eliminadas = 0;
+        $errores = [];
+
+        // Desactivar comprobación de claves foráneas
+        if (FS_DB_TYPE === 'MYSQL') {
+            $this->db->exec('SET FOREIGN_KEY_CHECKS = 0;');
+        }
+
+        // Eliminar todas las tablas
+        foreach ($tablas as $tabla) {
+            $nombre = $tabla['name'];
+            if (FS_DB_TYPE === 'MYSQL') {
+                $sql = 'DROP TABLE IF EXISTS `' . $nombre . '`';
+            } else {
+                $sql = 'DROP TABLE IF EXISTS "' . $nombre . '" CASCADE';
+            }
+
+            if ($this->db->exec($sql)) {
+                $tablas_eliminadas++;
+            } else {
+                $errores[] = $nombre;
+            }
+        }
+
+        // Reactivar comprobación de claves foráneas
+        if (FS_DB_TYPE === 'MYSQL') {
+            $this->db->exec('SET FOREIGN_KEY_CHECKS = 1;');
+        }
+
+        // Eliminar config.php
+        $config_path = FS_FOLDER . '/config.php';
+        $config_eliminado = false;
+        if (file_exists($config_path)) {
+            $config_eliminado = unlink($config_path);
+        }
+
+        // Redirigir al inicio (el instalador se mostrará al no existir config.php)
+        if (empty($errores) && $config_eliminado !== false) {
+            header('Location: index.php');
+            exit();
+        }
+
+        // Si hubo errores, mostrarlos
+        if (!empty($errores)) {
+            $this->new_error_msg('Error al eliminar las tablas: ' . implode(', ', $errores));
+        }
+        if (!$config_eliminado) {
+            $this->new_error_msg('No se pudo eliminar el archivo config.php');
+        }
+        $this->new_message('Se eliminaron ' . $tablas_eliminadas . ' tablas de la base de datos.');
     }
 
     /**
@@ -336,6 +407,16 @@ class fsdk_home extends fs_controller
         // Verificar si se seleccionaron plugins específicos
         if (isset($_POST['plugins_seleccionados']) && is_array($_POST['plugins_seleccionados'])) {
             $plugins_a_limpiar = $_POST['plugins_seleccionados'];
+        } else if (isset($_POST['plugins'])) {
+            // Compatibilidad por parámetro plugins (POST)
+            $plugins_a_limpiar = is_array($_POST['plugins'])
+                ? $_POST['plugins']
+                : array_filter(array_map('trim', explode(',', (string) $_POST['plugins'])));
+        } else if (isset($_GET['plugins'])) {
+            // Compatibilidad por parámetro plugins (GET)
+            $plugins_a_limpiar = is_array($_GET['plugins'])
+                ? $_GET['plugins']
+                : array_filter(array_map('trim', explode(',', (string) $_GET['plugins'])));
         } else if (isset($_GET['plugin'])) {
             // Compatibilidad con eliminación individual por URL
             $plugins_a_limpiar = [$_GET['plugin']];
@@ -344,6 +425,8 @@ class fsdk_home extends fs_controller
             $this->new_message('No se seleccionó ningún plugin para limpiar.', true);
             return;
         }
+
+        $plugins_a_limpiar = array_values(array_unique(array_filter(array_map('strval', $plugins_a_limpiar))));
 
         foreach ($this->plugins_desactivados as $plugin) {
             if (!in_array($plugin['nombre'], $plugins_a_limpiar)) {

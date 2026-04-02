@@ -1,18 +1,23 @@
-FSDK para Facturascripts
-========================
+FSDK para FSFramework
+=====================
 
 ## Synopsis ##
 
-__FSDK__ es un plugin para FacturaScripts que proporciona ayudas en el desarrollo y testeo de plugins:
+__FSDK__ es un plugin para FSFramework que proporciona ayudas en el desarrollo y testeo de plugins:
 
 * Generación de manera automática los archivos de estructura de datos, modelo y controlador a partir de una tabla.
-* Generación de plugin 'Hola mundo' como ejemplo
+* Generación de plugin de ejemplo con metadatos `fsframework.ini` y vistas Twig nativas
 * Generación de datos aleatorios de las tablas principales para pruebas
 
 
 ## Requisitos ##
 
-Para el uso y funcionamiento de __FSDK__ es necesario tener instalado y funcionando la aplicación [Facturascripts](https://www.facturascripts.com/).
+Para el uso y funcionamiento de __FSDK__ es necesario tener instalado y funcionando FSFramework.
+
+## Estado actual ##
+
+La versión incluida en este repositorio ya no depende de plantillas legacy `.html` para sus pantallas principales.
+Las vistas del plugin y las que genera por defecto se renderizan con Twig mediante archivos `.html.twig`.
 
 ## Instalación ##
 

@@ -1,13 +1,13 @@
-{include="header"}
+{% include 'header.html.twig' %}
 
-{if="$fsc->ejercicio"}
+{% if fsc.ejercicio %}
 <div class="container-fluid">
    <div class="row">
       <div class="col-sm-12">
          <div class="page-header">
             <h1>
                <i class="fa fa-balance-scale" aria-hidden="true"></i> CSV =&gt; Plan contable
-               <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
+               <a class="btn btn-xs btn-default" href="{{ fsc.url() }}" title="Recargar la página">
                   <span class="glyphicon glyphicon-refresh"></span>
                </a>
             </h1>
@@ -18,33 +18,28 @@
          </div>
       </div>
    </div>
-   <form class="form" action="{$fsc->url()}#plugins" enctype="multipart/form-data" method="post">
+   <form class="form" action="{{ fsc.url() }}#plugins" enctype="multipart/form-data" method="post">
+      {{ csrf_field() }}
       <input type="hidden" name="csv" value="TRUE"/>
       <div class="row">
          <div class="col-sm-3">
             <div class="form-group">
                <input type="file" name="fcsv" accept=".csv"/>
-               <p class="help-block">
-                  El archivo debe tener las columnas <b>CODIGO</b> y <b>NOMBRE</b>
-               </p>
+               <p class="help-block">El archivo debe tener las columnas <b>CODIGO</b> y <b>NOMBRE</b></p>
             </div>
          </div>
          <div class="col-sm-3">
             <div class="form-group">
                Separador de columnas:
-               <input type="text" name="separador" value="{$fsc->separador}" maxlength="1" class="form-control" autocomplete="off"/>
+               <input type="text" name="separador" value="{{ fsc.separador }}" maxlength="1" class="form-control" autocomplete="off"/>
             </div>
          </div>
          <div class="col-sm-3">
-            <a href="{$fsc->ejercicio->url()}">Ejercicio</a>:
+            <a href="{{ fsc.ejercicio.url() }}">Ejercicio</a>:
             <select name="codejercicio" class="form-control">
-            {loop="$fsc->ejercicio->all()"}
-               {if="$value->codejercicio==$fsc->codejercicio"}
-               <option value="{$value->codejercicio}" selected="">{$value->nombre}</option>
-               {else}
-               <option value="{$value->codejercicio}">{$value->nombre}</option>
-               {/if}
-            {/loop}
+            {% for ejercicio in fsc.ejercicio.all() %}
+               <option value="{{ ejercicio.codejercicio }}"{% if ejercicio.codejercicio == fsc.codejercicio %} selected=""{% endif %}>{{ ejercicio.nombre }}</option>
+            {% endfor %}
             </select>
          </div>
          <div class="col-sm-3">
@@ -56,6 +51,6 @@
       </div>
    </form>
 </div>
-{/if}
+{% endif %}
 
-{include="footer"}
+{% include 'footer.html.twig' %}

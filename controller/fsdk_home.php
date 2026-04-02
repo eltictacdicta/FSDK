@@ -205,13 +205,18 @@ class fsdk_home extends fs_controller
                     break;
             }
         } else if (isset($_POST['generarplugin'])) {
-            if (!is_writable("plugins")) {
+            $pluginName = $this->normalize_plugin_name((string) filter_input(INPUT_POST, 'nombre'));
+            $description = trim((string) filter_input(INPUT_POST, 'descripcion'));
+
+            if (empty($pluginName)) {
+                $this->new_error_msg('Debes indicar un nombre de plugin válido. Usa letras, números y guiones bajos.');
+            } else if (!is_writable('plugins')) {
                 $this->new_message('No tienes permisos de escritura en la carpeta plugins.');
-            } else if ($this->generar_plugin($_POST['nombre'], $_POST['descripcion'])) {
-                $this->new_message("Se generó el plugin " . $_POST['nombre'] . " en el directorio plugins."
+            } else if ($this->generar_plugin($pluginName, $description)) {
+                $this->new_message("Se generó el plugin " . $pluginName . " en el directorio plugins."
                     . " Puedes activarlo desde el <a href='index.php?page=admin_home#plugins'>panel de control</a>.");
             } else {
-                $this->new_error_msg("Hubo un problema al generar el plugin " . $_POST['nombre'] . ": Revise los logs de su servidor web.");
+                $this->new_error_msg("Hubo un problema al generar el plugin " . $pluginName . ": Revise los logs de su servidor web.");
             }
         }
 
@@ -232,15 +237,21 @@ class fsdk_home extends fs_controller
     private function crea_estructura($nombre)
     {
         $ok = FALSE;
+        $pluginPath = 'plugins/' . $nombre;
+
+        if (is_dir($pluginPath)) {
+            $this->new_error_msg('Ya existe un plugin con ese nombre.');
+            return FALSE;
+        }
 
         // creamos el dir del plugin
-        if (mkdir("plugins/" . $nombre)) {
+        if (mkdir($pluginPath)) {
             $ok = TRUE;
 
             // creamos los directorios
-            $dirs = array("controller", "view", "model");
+            $dirs = array('controller', 'view', 'model');
             foreach ($dirs as $dir) {
-                if (!mkdir("plugins/" . $nombre . "/" . $dir)) {
+                if (!mkdir($pluginPath . '/' . $dir)) {
                     $ok = FALSE;
                 }
             }
@@ -252,25 +263,48 @@ class fsdk_home extends fs_controller
     private function genera_ficheros($nombre, $descripcion)
     {
         $descripcion .= "\n<br/>Accesible desde Admin &gt; " . $nombre;
+        $pluginPath = 'plugins/' . $nombre;
 
-        if (!file_put_contents("plugins/" . $nombre . "/description", $descripcion)) {
+        if (!file_put_contents($pluginPath . '/description', $descripcion)) {
             return FALSE;
         }
 
-        if (!file_put_contents("plugins/" . $nombre . "/facturascripts.ini", "version = 1")) {
+        if (!file_put_contents($pluginPath . '/facturascripts.ini', "version = 1\n")) {
             return FALSE;
         }
 
-        $textcontroller = str_replace("holamundo", $nombre, file_get_contents(__DIR__ . '/../tmpls/controller.php'));
-        $textvista = file_get_contents(__DIR__ . '/../tmpls/view.html');
-
-        if (!file_put_contents("plugins/" . $nombre . "/controller/" . $nombre . ".php", $textcontroller)) {
+        if (!file_put_contents($pluginPath . '/fsframework.ini', $this->build_fsframework_ini($nombre, $descripcion))) {
             return FALSE;
-        } else if (!file_put_contents("plugins/" . $nombre . "/view/" . $nombre . ".html", $textvista)) {
+        }
+
+        $textcontroller = str_replace('holamundo', $nombre, file_get_contents(__DIR__ . '/../tmpls/controller.php'));
+        $textvista = file_get_contents(__DIR__ . '/../tmpls/view.html.twig');
+
+        if (!file_put_contents($pluginPath . '/controller/' . $nombre . '.php', $textcontroller)) {
+            return FALSE;
+        } else if (!file_put_contents($pluginPath . '/view/' . $nombre . '.html.twig', $textvista)) {
             return FALSE;
         }
 
         return TRUE;
+    }
+
+    private function normalize_plugin_name($nombre)
+    {
+        $normalized = preg_replace('/[^A-Za-z0-9_]/', '', (string) $nombre);
+        return trim((string) $normalized);
+    }
+
+    private function build_fsframework_ini($nombre, $descripcion)
+    {
+        $safeDescription = str_replace(["\r", "\n", '"'], [' ', ' ', '\\"'], strip_tags($descripcion));
+
+        return "version = 1\n"
+            . "description = \"" . trim($safeDescription) . "\"\n"
+            . "min_version = \"0.7\"\n"
+            . "author = \"FSFramework Team\"\n"
+            . "author_url = \"\"\n"
+            . "require = \"\"\n";
     }
 
     /**

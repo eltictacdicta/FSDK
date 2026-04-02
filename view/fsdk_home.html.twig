@@ -1,15 +1,16 @@
-{include="header"}
+{% include 'header.html.twig' %}
 
-{if="$fsc->url_recarga"}
+{% if fsc.url_recarga %}
 <script type="text/javascript">
    function recargar() {
-      window.location.href = '{$fsc->url_recarga}';
+      window.location.href = '{{ fsc.url_recarga|e('js') }}';
    }
+
    $(document).ready(function () {
       setTimeout(recargar, 5000);
    });
 </script>
-{/if}
+{% endif %}
 
 <div class="container-fluid">
    <div class="row">
@@ -19,25 +20,25 @@
                <i class="fa fa-rocket" aria-hidden="true"></i>
                FSDK
                <span class="btn-group">
-                  <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
+                  <a class="btn btn-xs btn-default" href="{{ fsc.url() }}" title="Recargar la página">
                      <span class="glyphicon glyphicon-refresh"></span>
                   </a>
-                  {if="$fsc->page->is_default()"}
-                  <a class="btn btn-xs btn-default active" href="{$fsc->url()}&amp;default_page=FALSE"
+                  {% if fsc.page.is_default() %}
+                  <a class="btn btn-xs btn-default active" href="{{ fsc.url() }}&default_page=FALSE"
                      title="Marcada como página de inicio (pulsa de nuevo para desmarcar)">
                      <i class="fa fa-bookmark" aria-hidden="true"></i>
                   </a>
-                  {else}
-                  <a class="btn btn-xs btn-default" href="{$fsc->url()}&amp;default_page=TRUE"
+                  {% else %}
+                  <a class="btn btn-xs btn-default" href="{{ fsc.url() }}&default_page=TRUE"
                      title="Marcar como página de inicio">
                      <i class="fa fa-bookmark-o" aria-hidden="true"></i>
                   </a>
-                  {/if}
+                  {% endif %}
                </span>
             </h1>
             <p class="help-block">
                Aquí encontrarás un conjunto de ayudas para el desarrollo y testeo de
-               plugins para FacturaScripts.
+               plugins para FSFramework.
             </p>
          </div>
       </div>
@@ -52,15 +53,11 @@
          <p class="help-block">
             Genera datos de prueba aleatorios para probar tus modificaciones.
             Puedes generar infinidad de artículos, clientes, proveedores y
-            {#FS_ALBARANES#} de tamaños aleatorios.
+            albaranes de tamaños aleatorios.
          </p>
       </div>
    </div>
-   <div class="row">
-      <div class="col-sm-12">
-         <br />
-      </div>
-   </div>
+   <div class="row"><div class="col-sm-12"><br /></div></div>
    <div class="row">
       <div class="col-sm-3">
          <a href="#" class="btn btn-sm btn-block btn-default" data-toggle="modal" data-target="#modal_tablas">
@@ -74,11 +71,7 @@
          </p>
       </div>
    </div>
-   <div class="row">
-      <div class="col-sm-12">
-         <br />
-      </div>
-   </div>
+   <div class="row"><div class="col-sm-12"><br /></div></div>
    <div class="row">
       <div class="col-sm-3">
          <a href="#" class="btn btn-sm btn-block btn-default" data-toggle="modal" data-target="#modal_nuevo_plugin">
@@ -87,7 +80,7 @@
       </div>
       <div class="col-sm-9">
          <p class="help-block">
-            Crea un plugin básico con "hola mundo" a partir de unos datos básicos.
+            Crea un plugin básico con controlador legacy compatible y vista Twig nativa.
          </p>
       </div>
    </div>
@@ -111,11 +104,7 @@
          </p>
       </div>
    </div>
-   <div class="row">
-      <div class="col-sm-12">
-         <br />
-      </div>
-   </div>
+   <div class="row"><div class="col-sm-12"><br /></div></div>
    <div class="row">
       <div class="col-sm-3">
          <a href="#" class="btn btn-sm btn-block btn-danger" data-toggle="modal" data-target="#modal_clean_tables">
@@ -129,11 +118,7 @@
          </p>
       </div>
    </div>
-   <div class="row">
-      <div class="col-sm-12">
-         <br />
-      </div>
-   </div>
+   <div class="row"><div class="col-sm-12"><br /></div></div>
    <div class="row">
       <div class="col-sm-3">
          <a href="#" class="btn btn-sm btn-block btn-danger" data-toggle="modal"
@@ -161,87 +146,58 @@
                <i class="fa fa-magic" aria-hidden="true"></i>
                Generar datos de prueba
             </h4>
-            <p class="help-block">
-               Selecciona qué datos quieres generar.
-            </p>
+            <p class="help-block">Selecciona qué datos quieres generar.</p>
          </div>
          <div class="modal-body">
             <div class="row">
                <div class="col-sm-4">
-                  <a href="{$fsc->url()}&gdp=fabricantes" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-folder" aria-hidden="true"></i> Fabricantes
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=fabricantes" class="btn btn-sm btn-block btn-default"><i class="fa fa-folder" aria-hidden="true"></i> Fabricantes</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=familias" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-folder" aria-hidden="true"></i> Familias
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=familias" class="btn btn-sm btn-block btn-default"><i class="fa fa-folder" aria-hidden="true"></i> Familias</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=articulos" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-cubes" aria-hidden="true"></i> Artículos
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=articulos" class="btn btn-sm btn-block btn-default"><i class="fa fa-cubes" aria-hidden="true"></i> Artículos</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=agentes" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-users" aria-hidden="true"></i> Empleados
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=agentes" class="btn btn-sm btn-block btn-default"><i class="fa fa-users" aria-hidden="true"></i> Empleados</a>
                   <br />
                </div>
                <div class="col-sm-4">
-                  <a href="{$fsc->url()}&gdp=proveedores" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-users" aria-hidden="true"></i> Proveedores
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=proveedores" class="btn btn-sm btn-block btn-default"><i class="fa fa-users" aria-hidden="true"></i> Proveedores</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=albaranesprov" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-copy" aria-hidden="true"></i> {#FS_ALBARANES#} de compra
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=albaranesprov" class="btn btn-sm btn-block btn-default"><i class="fa fa-copy" aria-hidden="true"></i> {{ constant('FS_ALBARANES') }} de compra</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=pedidosprov" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-copy" aria-hidden="true"></i> {#FS_PEDIDOS#} de compra
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=pedidosprov" class="btn btn-sm btn-block btn-default"><i class="fa fa-copy" aria-hidden="true"></i> {{ constant('FS_PEDIDOS') }} de compra</a>
                   <br />
                </div>
                <div class="col-sm-4">
-                  <a href="{$fsc->url()}&gdp=gruposcli" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-folder" aria-hidden="true"></i> Grupos de clientes
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=gruposcli" class="btn btn-sm btn-block btn-default"><i class="fa fa-folder" aria-hidden="true"></i> Grupos de clientes</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=clientes" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-users" aria-hidden="true"></i> Clientes
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=clientes" class="btn btn-sm btn-block btn-default"><i class="fa fa-users" aria-hidden="true"></i> Clientes</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=albaranescli" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-copy" aria-hidden="true"></i> {#FS_ALBARANES#} de venta
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=albaranescli" class="btn btn-sm btn-block btn-default"><i class="fa fa-copy" aria-hidden="true"></i> {{ constant('FS_ALBARANES') }} de venta</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=pedidoscli" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-copy" aria-hidden="true"></i> {#FS_PEDIDOS#} de venta
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=pedidoscli" class="btn btn-sm btn-block btn-default"><i class="fa fa-copy" aria-hidden="true"></i> {{ constant('FS_PEDIDOS') }} de venta</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=presupuestoscli" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-copy" aria-hidden="true"></i> {#FS_PRESUPUESTOS#} de venta
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=presupuestoscli" class="btn btn-sm btn-block btn-default"><i class="fa fa-copy" aria-hidden="true"></i> {{ constant('FS_PRESUPUESTOS') }} de venta</a>
                   <br />
-                  <a href="{$fsc->url()}&gdp=servicioscli" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-copy" aria-hidden="true"></i> {#FS_SERVICIOS#} a clientes
-                  </a>
+                  <a href="{{ fsc.url() }}&gdp=servicioscli" class="btn btn-sm btn-block btn-default"><i class="fa fa-copy" aria-hidden="true"></i> {{ constant('FS_SERVICIOS') }} a clientes</a>
                   <br />
                </div>
             </div>
             <div class="row">
-               {loop="$fsc->extensions"}
-               {if="$value->type=='generate'"}
+               {% for extension in fsc.extensions %}
+               {% if extension.type == 'generate' %}
                <div class="col-sm-4">
-                  <a href="index.php?page={$value->from}{$value->params}"
-                     class="btn btn-sm btn-block btn-default">{$value->text}</a>
+                  <a href="index.php?page={{ extension.from }}{{ extension.params }}" class="btn btn-sm btn-block btn-default">{{ extension.text }}</a>
                </div>
-               {/if}
-               {/loop}
+               {% endif %}
+               {% endfor %}
             </div>
             <div class="row">
                <div class="col-sm-12">
                   <div class="alert alert-warning">
                      <i class="fa fa-warning" aria-hidden="true"></i>
-                     La generación de datos de prueba sirve para demos y para probar los
-                     plugins con datos masivos. No continues si no sabes lo que haces.
+                     La generación de datos de prueba sirve para demos y para probar los plugins con datos masivos.
+                     No continues si no sabes lo que haces.
                   </div>
                </div>
             </div>
@@ -261,27 +217,26 @@
                <i class="fa fa-database" aria-hidden="true"></i>
                Tablas
             </h4>
-            <p class="help-block">
-               Selecciona una tabla para ver las opciones de generación.
-            </p>
+            <p class="help-block">Selecciona una tabla para ver las opciones de generación.</p>
          </div>
          <div class="modal-body">
             <div class="row">
-               {loop="$fsc->tablas"}
+               {% for tabla in fsc.tablas %}
                <div class="col-sm-4">
-                  <a href="index.php?page=fsdk_tabla&table={$value['name']}" class="btn btn-sm btn-block btn-default">
-                     <i class="fa fa-folder" aria-hidden="true"></i> {$value['name']}
+                  <a href="index.php?page=fsdk_tabla&table={{ tabla.name }}" class="btn btn-sm btn-block btn-default">
+                     <i class="fa fa-folder" aria-hidden="true"></i> {{ tabla.name }}
                   </a>
                   <br />
                </div>
-               {/loop}
+               {% endfor %}
             </div>
          </div>
       </div>
    </div>
 </div>
 
-<form class="form" role="form" name="f_nuevo_plugin" action="{$fsc->url()}" method="post">
+<form class="form" role="form" name="f_nuevo_plugin" action="{{ fsc.url() }}" method="post">
+   {{ csrf_field() }}
    <input type="hidden" name="generarplugin" value="1">
    <div class="modal" id="modal_nuevo_plugin" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -294,9 +249,7 @@
                   <i class="fa fa-puzzle-piece" aria-hidden="true"></i>
                   Nuevo plugin
                </h4>
-               <p class="help-block">
-                  Genera un nuevo plugin para que puedas empezar a modificarlo.
-               </p>
+               <p class="help-block">Genera un nuevo plugin para que puedas empezar a modificarlo.</p>
             </div>
             <div class="modal-body">
                <div class="form-group">
@@ -319,8 +272,9 @@
    </div>
 </form>
 
-<form action="{$fsc->url()}" method="post"
+<form action="{{ fsc.url() }}" method="post"
    onsubmit="return confirm('¿Estás seguro de que quieres eliminar las tablas de los plugins seleccionados? Esta acción no se puede deshacer.')">
+   {{ csrf_field() }}
    <input type="hidden" name="clean_plugin_tables" value="TRUE">
    <div class="modal fade" id="modal_clean_tables" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-lg" role="document">
@@ -333,21 +287,18 @@
                   <i class="fa fa-trash-o" aria-hidden="true"></i>
                   Limpiar tablas de plugins desactivados
                </h4>
-               <p class="help-block">
-                  Secciona los plugins de los que quieres eliminar las tablas.
-               </p>
+               <p class="help-block">Secciona los plugins de los que quieres eliminar las tablas.</p>
             </div>
             <div class="modal-body">
-               {if="empty($fsc->plugins_desactivados)"}
+               {% if fsc.plugins_desactivados is empty %}
                <div class="alert alert-info">
                   <i class="fa fa-info-circle" aria-hidden="true"></i>
                   No se encontraron plugins desactivados con tablas en la base de datos.
                </div>
-               {else}
+               {% else %}
                <div class="alert alert-warning">
                   <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                  <strong>¡Atención!</strong> Esta acción eliminará permanentemente las tablas seleccionadas de la base
-                  de datos.
+                  <strong>¡Atención!</strong> Esta acción eliminará permanentemente las tablas seleccionadas de la base de datos.
                   Asegúrate de tener un backup antes de continuar.
                </div>
                <div class="table-responsive">
@@ -364,46 +315,44 @@
                         </tr>
                      </thead>
                      <tbody>
-                        {loop="$fsc->plugins_desactivados"}
+                        {% for plugin in fsc.plugins_desactivados %}
                         <tr>
                            <td>
-                              <input type="checkbox" name="plugins_seleccionados[]" value="{$value['nombre']}"
+                              <input type="checkbox" name="plugins_seleccionados[]" value="{{ plugin.nombre }}"
                                  class="plugin-checkbox">
                            </td>
-                           <td><strong>{$value['nombre']}</strong></td>
+                           <td><strong>{{ plugin.nombre }}</strong></td>
+                           <td>{{ plugin.tablas_texto }}</td>
+                           <td>{{ plugin.num_tablas }}</td>
                            <td>
-                              {$value['tablas_texto']}
-                           </td>
-                           <td>{$value['num_tablas']}</td>
-                           <td>
-                              <a href="{$fsc->url()}&clean_plugin_tables=TRUE&plugins={$value['nombre']}"
+                              <a href="{{ fsc.url() }}&clean_plugin_tables=TRUE&plugins={{ plugin.nombre }}"
                                  class="btn btn-xs btn-danger"
-                                 onclick="return confirm('¿Eliminar solo las tablas del plugin {$value['nombre']}?')">
+                                 onclick="return confirm('¿Eliminar solo las tablas del plugin {{ plugin.nombre|e('js') }}?')">
                                  <i class="fa fa-trash-o" aria-hidden="true"></i> Solo este
                               </a>
                            </td>
                         </tr>
-                        {/loop}
+                        {% endfor %}
                      </tbody>
                      <tfoot>
                         <tr class="info">
                            <td></td>
                            <td><strong>Total de tablas:</strong></td>
                            <td></td>
-                           <td><strong>{$fsc->total_tablas_a_eliminar}</strong></td>
+                           <td><strong>{{ fsc.total_tablas_a_eliminar }}</strong></td>
                            <td></td>
                         </tr>
                      </tfoot>
                   </table>
                </div>
-               {/if}
+               {% endif %}
             </div>
             <div class="modal-footer">
-               {if="!empty($fsc->plugins_desactivados)"}
+               {% if fsc.plugins_desactivados is not empty %}
                <button type="submit" class="btn btn-danger">
                   <i class="fa fa-trash-o" aria-hidden="true"></i> Eliminar tablas de plugins seleccionados
                </button>
-               {/if}
+               {% endif %}
                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
             </div>
          </div>
@@ -421,7 +370,8 @@
    }
 </script>
 
-<form action="{$fsc->url()}" method="post" id="form_resetear_framework">
+<form action="{{ fsc.url() }}" method="post" id="form_resetear_framework">
+   {{ csrf_field() }}
    <input type="hidden" name="resetear_framework" value="TRUE">
    <div class="modal fade" id="modal_resetear_framework" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
@@ -468,4 +418,4 @@
    });
 </script>
 
-{include="footer"}
+{% include 'footer.html.twig' %}
